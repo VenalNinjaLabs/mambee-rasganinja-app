@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Mambee RasgaNinja</string>
     <string name="action_settings">Settings</string>
+    <string name="nome">Nome</string>
+    <string name="cidade">Cidade</string>
+    <string name="referencia_institui_o">Referencia (Instituição)</string>
+    <string name="comentario">Comentário</string>
+    <string name="adicionar">Adicionar</string>
 </resources>
