@@ -3,7 +3,10 @@ package ninja.rasga.mambeerasganinja;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -33,6 +36,24 @@ public class DetalheActivity extends AppCompatActivity {
         TextView referencia = findViewById(R.id.referencia);
         TextView comentario = findViewById(R.id.comentario);
         TextView avatar = findViewById(R.id.avatar);
+        CardView thumbUp = findViewById(R.id.thumbUp);
+        CardView thumbDown = findViewById(R.id.thumbDown);
+
+        thumbUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rasgadaDetalhada.setVotosUp(rasgadaDetalhada.getVotosUp()+1);
+                Toast.makeText(DetalheActivity.this, "Voto positivo: "+rasgadaDetalhada.getVotosUp(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        thumbDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rasgadaDetalhada.setVotosDown(rasgadaDetalhada.getVotosDown()+1);
+                Toast.makeText(DetalheActivity.this, "Voto negativo: "+rasgadaDetalhada.getVotosDown(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         nome.setText(rasgadaDetalhada.getNome());
         cidade.setText(rasgadaDetalhada.getCidade());
