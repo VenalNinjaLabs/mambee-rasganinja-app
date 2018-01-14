@@ -59,6 +59,6 @@ public class DetalheActivity extends AppCompatActivity {
         cidade.setText(rasgadaDetalhada.getCidade());
         referencia.setText(rasgadaDetalhada.getReferencia());
         comentario.setText(rasgadaDetalhada.getComentario());
-        avatar.setText(rasgadaDetalhada.getNome().toUpperCase().charAt(0));
+        avatar.setText(String.valueOf(rasgadaDetalhada.getNome().toUpperCase().charAt(0)));
     }
 }

@@ -58,6 +58,7 @@
                 </LinearLayout>
             </LinearLayout>
             <TextView
+                android:id="@+id/comentario"
                 android:layout_marginTop="20dp"
                 android:textSize="20sp"
                 android:layout_width="match_parent"
