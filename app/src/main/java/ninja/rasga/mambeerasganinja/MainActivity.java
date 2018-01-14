@@ -5,12 +5,22 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
+
+    private RecyclerView container;
+    private Adaptador adaptador;
+    private List<ModeloRasgada> dados;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +36,38 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, RasgaActivity.class));
             }
         });
+
+        dados = new ArrayList<>();
+
+        dados.add(new ModeloRasgada("Fulano de tal",
+                "Picos",
+                "IFPI",
+                "Fulano de tal tava andando de bicicleta e levou um tombo",
+                10,
+                5,
+                Calendar.getInstance().getTime()));
+        dados.add(new ModeloRasgada("Fulano de tal 2",
+                "Picos",
+                "IFPI",
+                "Fulano de tal tava andando de bicicleta e levou um tombo 2",
+                10,
+                5,
+                Calendar.getInstance().getTime()));
+        dados.add(new ModeloRasgada("Fulano de tal 3",
+                "Picos",
+                "IFPI",
+                "Fulano de tal tava andando de bicicleta e levou um tombo 3",
+                10,
+                5,
+                Calendar.getInstance().getTime()));
+
+        adaptador = new Adaptador(this,dados);
+
+        container = findViewById(R.id.container);
+        container.setNestedScrollingEnabled(false);
+        container.setHasFixedSize(true);
+        container.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+        container.setAdapter(adaptador);
     }
 
     @Override
