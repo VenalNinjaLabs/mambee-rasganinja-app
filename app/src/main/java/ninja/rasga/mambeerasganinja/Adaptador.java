@@ -2,6 +2,8 @@ package ninja.rasga.mambeerasganinja;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -29,11 +31,14 @@ public class Adaptador extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((ViewHolder) holder).bind(dados.get(position));
+        final ModeloRasgada rasgada = dados.get(position);
+        ((ViewHolder) holder).bind(rasgada,context);
         ((ViewHolder) holder).cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                context.startActivity(new Intent(context,DetalheActivity.class));
+                Intent intent = new Intent(context,DetalheActivity.class);
+                intent.putExtra("id",rasgada.id);
+                context.startActivity(intent);
             }
         });
     }
@@ -62,6 +67,7 @@ public class Adaptador extends RecyclerView.Adapter {
         TextView votosDown;
         TextView data;
         CardView cardView;
+        CardView ball;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -75,9 +81,10 @@ public class Adaptador extends RecyclerView.Adapter {
             votosUp = itemView.findViewById(R.id.card_up_votes);
             votosDown = itemView.findViewById(R.id.card_down_votes);
             data = itemView.findViewById(R.id.card_data);
+            ball = itemView.findViewById(R.id.ball);
         }
 
-        public void bind(ModeloRasgada modeloRasgada){
+        public void bind(ModeloRasgada modeloRasgada,Context context){
             avatar.setText(String.valueOf(modeloRasgada.getNome().toUpperCase().charAt(0)));
             nome.setText(modeloRasgada.getNome());
             cidade.setText(modeloRasgada.getCidade());
@@ -85,6 +92,13 @@ public class Adaptador extends RecyclerView.Adapter {
             comentario.setText(modeloRasgada.getComentario());
             votosUp.setText(String.valueOf(modeloRasgada.getVotosUp()));
             votosDown.setText(String.valueOf(modeloRasgada.getVotosDown()));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                if(modeloRasgada.getVotosDown() > modeloRasgada.getVotosUp()){
+                    ball.setCardBackgroundColor(context.getResources().getColor(R.color.holo_red_light));
+                }else{
+                    ball.setCardBackgroundColor(context.getResources().getColor(R.color.holo_green_light));
+                }
+            }
             data.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(modeloRasgada.getData()));
         }
     }

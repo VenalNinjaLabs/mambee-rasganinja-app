@@ -7,25 +7,17 @@ import java.util.Date;
  */
 
 public class ModeloRasgada {
-    private String nome;
-    private String cidade;
-    private String referencia;
-    private String comentario;
-    private int votosUp;
-    private int votosDown;
-    private Date data;
+    public String nome;
+    public String cidade;
+    public String referencia;
+    public String comentario;
+    public int votosPositivos;
+    public int votosNegativos;
+    public int totalVotos;
+    public Date horario;
+    public String id;
 
     public  ModeloRasgada(){}
-
-    public ModeloRasgada(String nome, String cidade, String referencia, String comentario, int votosUp, int votosDown, Date data) {
-        this.nome = nome;
-        this.cidade = cidade;
-        this.referencia = referencia;
-        this.comentario = comentario;
-        this.votosUp = votosUp;
-        this.votosDown = votosDown;
-        this.data = data;
-    }
 
     public String getNome() {
         return nome;
@@ -60,26 +52,34 @@ public class ModeloRasgada {
     }
 
     public int getVotosUp() {
-        return votosUp;
+        return votosPositivos;
     }
 
     public void setVotosUp(int votosUp) {
-        this.votosUp = votosUp;
+        this.votosPositivos = votosUp;
     }
 
     public int getVotosDown() {
-        return votosDown;
+        return votosNegativos;
     }
 
     public void setVotosDown(int votosDown) {
-        this.votosDown = votosDown;
+        this.votosNegativos = votosDown;
     }
 
     public Date getData() {
-        return data;
+        return horario;
     }
 
     public void setData(Date data) {
-        this.data = data;
+        this.horario = data;
+    }
+
+    public int getTotalVotos() {
+        return totalVotos;
+    }
+
+    public void setTotalVotos(int totalVotos) {
+        this.totalVotos = totalVotos;
     }
 }

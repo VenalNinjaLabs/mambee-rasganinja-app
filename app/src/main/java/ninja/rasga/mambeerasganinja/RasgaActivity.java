@@ -1,5 +1,7 @@
 package ninja.rasga.mambeerasganinja;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +9,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import ninja.rasga.mambeerasganinja.api.ServiceGenerator;
+import ninja.rasga.mambeerasganinja.api.UrlService;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RasgaActivity extends AppCompatActivity {
 
@@ -34,7 +42,18 @@ public class RasgaActivity extends AppCompatActivity {
                 novaRasgada.setComentario(comentario.getText().toString());
                 novaRasgada.setReferencia(referencia.getText().toString());
 
-                Toast.makeText(RasgaActivity.this, "Salvando no banco de dados...", Toast.LENGTH_SHORT).show();
+                ServiceGenerator.createService(UrlService.class).salvar(novaRasgada).enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        Toast.makeText(RasgaActivity.this, "Salvo.", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(RasgaActivity.this,MainActivity.class));
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(RasgaActivity.this, "Tente novamente.", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 
