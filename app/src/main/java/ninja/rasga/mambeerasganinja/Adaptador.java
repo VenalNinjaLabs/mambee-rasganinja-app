@@ -95,8 +95,10 @@ public class Adaptador extends RecyclerView.Adapter {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 if(modeloRasgada.getVotosDown() > modeloRasgada.getVotosUp()){
                     ball.setCardBackgroundColor(context.getResources().getColor(R.color.holo_red_light));
-                }else{
+                }else if(modeloRasgada.getVotosDown() < modeloRasgada.getVotosUp()){
                     ball.setCardBackgroundColor(context.getResources().getColor(R.color.holo_green_light));
+                }else{
+                    ball.setCardBackgroundColor(context.getResources().getColor(R.color.colorAccent));
                 }
             }
             data.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(modeloRasgada.getData()));

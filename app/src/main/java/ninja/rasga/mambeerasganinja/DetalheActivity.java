@@ -79,8 +79,10 @@ public class DetalheActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             if(rasgadaDetalhada.getVotosDown() > rasgadaDetalhada.getVotosUp()){
                 ball.setCardBackgroundColor(getResources().getColor(R.color.holo_red_light));
-            }else{
+            }else if(rasgadaDetalhada.getVotosDown() < rasgadaDetalhada.getVotosUp()){
                 ball.setCardBackgroundColor(getResources().getColor(R.color.holo_green_light));
+            }else{
+                ball.setCardBackgroundColor(getResources().getColor(R.color.colorAccent));
             }
         }
     }

@@ -34,6 +34,8 @@ public class RasgaActivity extends AppCompatActivity {
         final EditText cidade = findViewById(R.id.cidade);
         Button salvar = findViewById(R.id.button);
 
+        novaRasgada = new ModeloRasgada();
+
         salvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
