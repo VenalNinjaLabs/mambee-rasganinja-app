@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import ninja.rasga.mambeerasganinja.api.RespostaListagem;
 import ninja.rasga.mambeerasganinja.api.ServiceGenerator;
 import ninja.rasga.mambeerasganinja.api.UrlService;
 import retrofit2.Call;
@@ -88,10 +89,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     public void loadData(final Context context){
         refresh.setRefreshing(true);
-        ServiceGenerator.createService(UrlService.class).listarRasgadas().enqueue(new Callback<List<ModeloRasgada>>() {
+        ServiceGenerator.createService(UrlService.class).listarRasgadas().enqueue(new Callback<RespostaListagem>() {
             @Override
-            public void onResponse(Call<List<ModeloRasgada>> call, Response<List<ModeloRasgada>> response) {
-                dados = response.body();
+            public void onResponse(Call<RespostaListagem> call, Response<RespostaListagem> response) {
+                dados = response.body().rasgadas;
                 adaptador = new Adaptador(context,dados);
                 container.setAdapter(adaptador);
                 refresh.setRefreshing(false);
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
 
             @Override
-            public void onFailure(Call<List<ModeloRasgada>> call, Throwable t) {
+            public void onFailure(Call<RespostaListagem> call, Throwable t) {
                 refresh.setRefreshing(false);
                 Toast.makeText(context, "Tente novamente.", Toast.LENGTH_SHORT).show();
             }

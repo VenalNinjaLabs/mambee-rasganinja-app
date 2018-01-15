@@ -21,7 +21,7 @@ public interface UrlService {
     Call<Void> salvar(@Body ModeloRasgada modeloRasgada);
 
     @GET("rasgadas/")
-    Call<List<ModeloRasgada>> listarRasgadas();
+    Call<RespostaListagem> listarRasgadas();
 
     @GET("rasgadas/")
     Call<List<ModeloRasgada>> listarRasgadas(@Query("p") int page);
