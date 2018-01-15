@@ -43,6 +43,8 @@ public class DetalheActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
+        id = "";
+
         if(intent.getExtras() != null){
             id = intent.getStringExtra("id");
         }
