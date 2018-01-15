@@ -32,13 +32,14 @@ public class RasgaActivity extends AppCompatActivity {
         final EditText comentario = findViewById(R.id.comentario);
         final EditText referencia = findViewById(R.id.referencia);
         final EditText cidade = findViewById(R.id.cidade);
-        Button salvar = findViewById(R.id.button);
+        final Button salvar = findViewById(R.id.button);
 
         novaRasgada = new ModeloRasgada();
 
         salvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                salvar.setEnabled(false);
                 novaRasgada.setNome(nome.getText().toString());
                 novaRasgada.setCidade(cidade.getText().toString());
                 novaRasgada.setComentario(comentario.getText().toString());
@@ -54,6 +55,7 @@ public class RasgaActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
                         Toast.makeText(RasgaActivity.this, "Tente novamente.", Toast.LENGTH_SHORT).show();
+                        salvar.setEnabled(true);
                     }
                 });
             }

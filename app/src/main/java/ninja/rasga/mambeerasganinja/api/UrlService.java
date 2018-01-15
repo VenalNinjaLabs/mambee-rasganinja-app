@@ -24,7 +24,7 @@ public interface UrlService {
     Call<RespostaListagem> listarRasgadas();
 
     @GET("rasgadas/")
-    Call<List<ModeloRasgada>> listarRasgadas(@Query("p") int page);
+    Call<RespostaListagem> listarRasgadas(@Query("p") int page);
 
     @GET("rasgadas/{id}")
     Call<ModeloRasgada> pegarRasgada(@Path("id") String id);

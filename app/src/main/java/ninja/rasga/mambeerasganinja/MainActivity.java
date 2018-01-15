@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,8 +33,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private RecyclerView container;
     private Adaptador adaptador;
     private List<ModeloRasgada> dados;
-    private ScrollView scrollView;
+    private NestedScrollView scrollView;
     private SwipeRefreshLayout refresh;
+
+    private int paginaAtual;
+    private int proximaPagina;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +56,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         dados = new ArrayList<>();
 
+        paginaAtual = 0;
+        proximaPagina = 0;
+
         container = findViewById(R.id.container);
         container.setNestedScrollingEnabled(false);
-        container.setHasFixedSize(true);
         container.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
 
         refresh = findViewById(R.id.refresh);
@@ -70,11 +76,25 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         ServiceGenerator.createService(UrlService.class).listarRasgadas().enqueue(new Callback<RespostaListagem>() {
             @Override
             public void onResponse(Call<RespostaListagem> call, Response<RespostaListagem> response) {
+                paginaAtual = 1;
+                proximaPagina = response.body().nextPage;
                 dados = response.body().rasgadas;
-                adaptador = new Adaptador(context,dados);
+                adaptador = new Adaptador(context,dados,container);
                 container.setAdapter(adaptador);
+                container.invalidate();
                 refresh.setRefreshing(false);
                 scrollView.smoothScrollTo(0,0);
+                adaptador.setOnLoadMoreListener(new Adaptador.OnLoadMoreListener() {
+                    @Override
+                    public void onLoadMore() {
+                        dados.add(null);
+                        adaptador.notifyItemInserted(dados.size()-1);
+                        nextPage();
+                    }
+                });
+                if(proximaPagina == paginaAtual){
+                    adaptador.setLoaded();
+                }
             }
 
             @Override
@@ -83,6 +103,32 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 Toast.makeText(context, "Tente novamente.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void nextPage() {
+        if(proximaPagina == paginaAtual){
+            dados.remove(dados.size() - 1);
+            adaptador.notifyItemRemoved(dados.size());
+            adaptador.setLoaded();
+        }else {
+            ServiceGenerator.createService(UrlService.class).listarRasgadas(proximaPagina).enqueue(new Callback<RespostaListagem>() {
+                @Override
+                public void onResponse(Call<RespostaListagem> call, Response<RespostaListagem> response) {
+                    paginaAtual=proximaPagina;
+                    proximaPagina = response.body().nextPage;
+                    dados.remove(dados.size() - 1);
+                    adaptador.notifyItemRemoved(dados.size());
+                    dados.addAll(response.body().rasgadas);
+                    adaptador.notifyDataSetChanged();
+                    adaptador.setLoaded();
+                }
+
+                @Override
+                public void onFailure(Call<RespostaListagem> call, Throwable t) {
+                    Toast.makeText(MainActivity.this, "Algo errado aconteceu.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     @Override

@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -19,42 +21,90 @@ import java.util.Locale;
  * Created by magdiel on 14/01/18.
  */
 
-public class Adaptador extends RecyclerView.Adapter {
+public class Adaptador extends RecyclerView.Adapter{
 
     private Context context;
     private List<ModeloRasgada> dados;
 
-    public Adaptador(Context context, List<ModeloRasgada> dados){
-        this.context = context;
-        this.dados = dados;
+    private boolean isLoading;
+    private int visibleThreshold = 10;
+    private int lastVisibleItem, totalItemCount;
+
+    private final int VIEW_TYPE_ITEM = 0;
+    private final int VIEW_TYPE_LOADING = 1;
+
+    private OnLoadMoreListener onLoadMoreListener;
+    public void setOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {
+        this.onLoadMoreListener = mOnLoadMoreListener;
     }
 
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        final ModeloRasgada rasgada = dados.get(position);
-        ((ViewHolder) holder).bind(rasgada,context);
-        ((ViewHolder) holder).cardView.setOnClickListener(new View.OnClickListener() {
+    public Adaptador(Context context, List<ModeloRasgada> dados, RecyclerView recyclerView){
+        this.context = context;
+        this.dados = dados;
+
+        final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context,DetalheActivity.class);
-                intent.putExtra("id",rasgada.id);
-                context.startActivity(intent);
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                totalItemCount = linearLayoutManager.getItemCount();
+                lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+                if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+                    if (onLoadMoreListener != null) {
+                        onLoadMoreListener.onLoadMore();
+                    }
+                    isLoading = true;
+                }
             }
         });
     }
 
     @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        final ModeloRasgada rasgada = dados.get(position);
+        if (holder instanceof ViewHolder) {
+            ((ViewHolder) holder).bind(rasgada,context);
+            ((ViewHolder) holder).cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context,DetalheActivity.class);
+                    intent.putExtra("id",rasgada.id);
+                    context.startActivity(intent);
+                }
+            });
+        } else if (holder instanceof LoadingViewHolder) {
+            LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
+            loadingViewHolder.progressBar.setIndeterminate(true);
+        }
+
+    }
+
+    @Override
     public int getItemCount() {
-        return dados.size();
+        return dados == null ? 0 : dados.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return dados.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RecyclerView.ViewHolder vh;
-        View v = LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.cardview_rasgada, parent, false);
-        vh = new ViewHolder(v);
-        return vh;
+        if (viewType == VIEW_TYPE_ITEM) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.cardview_rasgada, parent, false);
+            return new ViewHolder(view);
+        } else if (viewType == VIEW_TYPE_LOADING) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.item_loading, parent, false);
+            return new LoadingViewHolder(view);
+        }
+        return null;
+    }
+
+    public void setLoaded() {
+        isLoading = false;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -103,5 +153,18 @@ public class Adaptador extends RecyclerView.Adapter {
             }
             data.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(modeloRasgada.getData()));
         }
+    }
+
+    private class LoadingViewHolder extends RecyclerView.ViewHolder {
+        public ProgressBar progressBar;
+
+        public LoadingViewHolder(View view) {
+            super(view);
+            progressBar = (ProgressBar) view.findViewById(R.id.progressBar1);
+        }
+    }
+
+    public interface OnLoadMoreListener {
+        void onLoadMore();
     }
 }
