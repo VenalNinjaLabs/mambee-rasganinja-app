@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 paginaAtual = 1;
                 proximaPagina = response.body().nextPage;
                 dados = response.body().rasgadas;
+                dados.add(null);
                 adaptador = new Adaptador(context,dados,container);
                 container.setAdapter(adaptador);
                 container.invalidate();
@@ -87,8 +88,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 adaptador.setOnLoadMoreListener(new Adaptador.OnLoadMoreListener() {
                     @Override
                     public void onLoadMore() {
-                        dados.add(null);
-                        adaptador.notifyItemInserted(dados.size()-1);
                         nextPage();
                     }
                 });
@@ -133,6 +132,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public void onRefresh() {
+        proximaPagina=0;
+        paginaAtual=0;
         loadData(this);
     }
 }
